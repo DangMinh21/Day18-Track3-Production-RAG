@@ -41,3 +41,7 @@ USE_FLASHRANK = True
 RAGAS_METRICS = ["faithfulness", "answer_relevancy", "context_precision", "context_recall"]
 REPORTS_DIR = os.path.join(os.path.dirname(__file__), "reports")
 ANALYSIS_DIR = os.path.join(os.path.dirname(__file__), "analysis")
+
+# --- Paths ---
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+TEST_SET_PATH = os.path.join(os.path.dirname(__file__), "test_set.json")

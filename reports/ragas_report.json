@@ -1,0 +1,91 @@
+{
+  "aggregate": {
+    "faithfulness": 0.8820634920634921,
+    "answer_relevancy": 0.07006292973671281,
+    "context_precision": 0.8249999999615277,
+    "context_recall": 0.7142857142857143
+  },
+  "num_questions": 30,
+  "failures": [
+    {
+      "question": "Người nộp thuế trong tờ khai GTGT là công ty nào và mã số thuế là gì?",
+      "worst_metric": "context_precision",
+      "score": 0.0,
+      "avg_score": 0.1683735385361091,
+      "diagnosis": "Too many irrelevant chunks",
+      "suggested_fix": "Add reranking, metadata filters, or stricter retrieval thresholds"
+    },
+    {
+      "question": "Tờ khai thuế giá trị gia tăng trong BCTC áp dụng cho kỳ tính thuế nào?",
+      "worst_metric": "answer_relevancy",
+      "score": 0.0,
+      "avg_score": 0.25,
+      "diagnosis": "Answer does not match question",
+      "suggested_fix": "Improve prompt template and make the model answer the exact question"
+    },
+    {
+      "question": "Dữ liệu cá nhân gồm những loại nào?",
+      "worst_metric": "answer_relevancy",
+      "score": 0.0,
+      "avg_score": 0.25,
+      "diagnosis": "Answer does not match question",
+      "suggested_fix": "Improve prompt template and make the model answer the exact question"
+    },
+    {
+      "question": "Ai là người ký điện tử trên tờ khai GTGT?",
+      "worst_metric": "answer_relevancy",
+      "score": 0.0,
+      "avg_score": 0.25,
+      "diagnosis": "Answer does not match question",
+      "suggested_fix": "Improve prompt template and make the model answer the exact question"
+    },
+    {
+      "question": "Tờ khai GTGT là lần đầu hay bổ sung lần thứ mấy?",
+      "worst_metric": "answer_relevancy",
+      "score": 0.0,
+      "avg_score": 0.299999999975,
+      "diagnosis": "Answer does not match question",
+      "suggested_fix": "Improve prompt template and make the model answer the exact question"
+    },
+    {
+      "question": "Cơ quan chuyên trách bảo vệ dữ liệu cá nhân là cơ quan nào?",
+      "worst_metric": "answer_relevancy",
+      "score": 0.0,
+      "avg_score": 0.49999999999166667,
+      "diagnosis": "Answer does not match question",
+      "suggested_fix": "Improve prompt template and make the model answer the exact question"
+    },
+    {
+      "question": "Theo Nghị định 13/2023/NĐ-CP, dữ liệu cá nhân là gì?",
+      "worst_metric": "context_recall",
+      "score": 0.0,
+      "avg_score": 0.5309748190409256,
+      "diagnosis": "Missing relevant chunks",
+      "suggested_fix": "Improve chunking, hybrid search, or increase retrieval top_k"
+    },
+    {
+      "question": "Bên Kiểm soát dữ liệu cá nhân có trách nhiệm gì theo Điều 38?",
+      "worst_metric": "answer_relevancy",
+      "score": 0.0,
+      "avg_score": 0.6071428571345238,
+      "diagnosis": "Answer does not match question",
+      "suggested_fix": "Improve prompt template and make the model answer the exact question"
+    },
+    {
+      "question": "Sau khi chủ thể dữ liệu rút lại sự đồng ý, các bên xử lý dữ liệu phải làm gì?",
+      "worst_metric": "answer_relevancy",
+      "score": 0.0,
+      "avg_score": 0.6249999999916667,
+      "diagnosis": "Answer does not match question",
+      "suggested_fix": "Improve prompt template and make the model answer the exact question"
+    },
+    {
+      "question": "Việc xóa dữ liệu cá nhân theo yêu cầu của chủ thể dữ liệu được thực hiện trong bao lâu?",
+      "worst_metric": "answer_relevancy",
+      "score": 0.0,
+      "avg_score": 0.6249999999916667,
+      "diagnosis": "Answer does not match question",
+      "suggested_fix": "Improve prompt template and make the model answer the exact question"
+    }
+  ]
+}

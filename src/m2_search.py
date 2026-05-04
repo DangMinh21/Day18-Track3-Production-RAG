@@ -141,12 +141,22 @@ class DenseSearch:
         # 1. Chuyển đổi câu truy vấn thành vector[cite: 2]
         query_vector = self._get_encoder().encode(query).tolist()
         
-        # 2. Thực hiện tìm kiếm top_k kết quả gần nhất trong Qdrant[cite: 2]
-        hits = self.client.search(
-            collection_name=collection,
-            query_vector=query_vector,
-            limit=top_k
-        )
+        # 2. Thực hiện tìm kiếm top_k kết quả gần nhất trong Qdrant.
+        # qdrant-client < 1.10 exposes search(), newer versions use query_points().
+        if hasattr(self.client, "search"):
+            hits = self.client.search(
+                collection_name=collection,
+                query_vector=query_vector,
+                limit=top_k
+            )
+        else:
+            response = self.client.query_points(
+                collection_name=collection,
+                query=query_vector,
+                limit=top_k,
+                with_payload=True,
+            )
+            hits = response.points
         
         # 3. Chuyển đổi kết quả từ Qdrant sang định dạng SearchResult của hệ thống[cite: 2]
         results = [

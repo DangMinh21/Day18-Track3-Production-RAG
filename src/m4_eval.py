@@ -170,39 +170,55 @@ def _evaluate_with_ragas(
     """Run real RAGAS and normalize package-version differences."""
     from datasets import Dataset
     from ragas import evaluate
+    from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+    from ragas.embeddings import LangchainEmbeddingsWrapper
+    from ragas.llms import LangchainLLMWrapper
+    from ragas.metrics import (
+        AnswerRelevancy,
+        Faithfulness,
+        LLMContextPrecisionWithReference,
+        LLMContextRecall,
+    )
 
-    try:
-        from ragas.metrics.collections import (
-            answer_relevancy,
-            context_precision,
-            context_recall,
-            faithfulness,
-        )
-    except ImportError:
-        from ragas.metrics import answer_relevancy, context_precision, context_recall, faithfulness
+    llm = LangchainLLMWrapper(
+        ChatOpenAI(model="gpt-4o-mini", temperature=0, api_key=OPENAI_API_KEY)
+    )
+    embeddings = LangchainEmbeddingsWrapper(
+        OpenAIEmbeddings(model="text-embedding-3-small", api_key=OPENAI_API_KEY)
+    )
+    metrics = [
+        Faithfulness(),
+        AnswerRelevancy(),
+        LLMContextPrecisionWithReference(),
+        LLMContextRecall(),
+    ]
 
     dataset = Dataset.from_dict(
         {
-            "question": questions,
-            "answer": answers,
-            "contexts": contexts,
-            "ground_truth": ground_truths,
+            "user_input": questions,
+            "response": answers,
+            "retrieved_contexts": contexts,
             "reference": ground_truths,
         }
     )
-    result = evaluate(dataset, metrics=[faithfulness, answer_relevancy, context_precision, context_recall])
+    result = evaluate(dataset, metrics=metrics, llm=llm, embeddings=embeddings)
 
     per_question = []
     for idx, row in result.to_pandas().iterrows():
         per_question.append(
             EvalResult(
-                question=str(row.get("question", questions[idx])),
-                answer=str(row.get("answer", answers[idx])),
-                contexts=_normalize_contexts(row.get("contexts"), contexts[idx]),
-                ground_truth=str(row.get("ground_truth", row.get("reference", ground_truths[idx]))),
+                question=str(row.get("user_input", questions[idx])),
+                answer=str(row.get("response", answers[idx])),
+                contexts=_normalize_contexts(row.get("retrieved_contexts"), contexts[idx]),
+                ground_truth=str(row.get("reference", ground_truths[idx])),
                 faithfulness=_safe_float(row.get("faithfulness")),
                 answer_relevancy=_safe_float(row.get("answer_relevancy")),
-                context_precision=_safe_float(row.get("context_precision")),
+                context_precision=_safe_float(
+                    row.get(
+                        "context_precision",
+                        row.get("context_precision_with_reference", row.get("llm_context_precision_with_reference")),
+                    )
+                ),
                 context_recall=_safe_float(row.get("context_recall")),
             )
         )

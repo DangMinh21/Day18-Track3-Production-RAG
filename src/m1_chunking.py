@@ -124,31 +124,36 @@ def chunk_semantic(text: str, threshold: float = SEMANTIC_THRESHOLD,
             ))
     
     except (ImportError, Exception):
-        # Fallback: use token overlap (Jaccard similarity) without external dependencies
-        def jaccard_similarity(s1, s2):
-            tokens1 = set(s1.lower().split())
-            tokens2 = set(s2.lower().split())
-            if not tokens1 or not tokens2:
-                return 0
-            intersection = len(tokens1 & tokens2)
-            union = len(tokens1 | tokens2)
-            return intersection / union if union > 0 else 0
-        
-        current_group = [sentences[0]]
-        for i in range(1, len(sentences)):
-            sim = jaccard_similarity(sentences[i-1], sentences[i])
-            if sim < threshold:
+        # Offline fallback: keep nearby paragraphs together instead of splitting every
+        # low-overlap sentence. This is stable for Markdown policies/reports where
+        # headings and following paragraphs usually represent one topic.
+        blocks = [block.strip() for block in text.split("\n\n") if block.strip()]
+        target_size = 700
+        current_group: list[str] = []
+        current_len = 0
+
+        for block in blocks:
+            block_len = len(block)
+            starts_new_section = bool(re.match(r"^#{1,3}\s+", block))
+            should_flush = (
+                current_group
+                and current_len + block_len > target_size
+                and not starts_new_section
+            )
+            if should_flush:
                 chunks.append(Chunk(
-                    text=" ".join(current_group),
+                    text="\n\n".join(current_group),
                     metadata={**metadata, "chunk_index": len(chunks), "strategy": "semantic"}
                 ))
                 current_group = []
-            current_group.append(sentences[i])
-        
-        # Don't forget last group
+                current_len = 0
+
+            current_group.append(block)
+            current_len += block_len
+
         if current_group:
             chunks.append(Chunk(
-                text=" ".join(current_group),
+                text="\n\n".join(current_group),
                 metadata={**metadata, "chunk_index": len(chunks), "strategy": "semantic"}
             ))
     

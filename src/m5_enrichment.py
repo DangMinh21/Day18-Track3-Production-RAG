@@ -139,9 +139,13 @@ def contextual_prepend(text: str, document_title: str = "") -> str:
     Returns:
         str: Text with context sentence prepended and preserved original.
     """
-    if not text or not OPENAI_API_KEY:
-        # Fallback: return original text
+    if not text:
         return text
+
+    if not OPENAI_API_KEY or os.getenv("ENABLE_LLM_ENRICHMENT", "").lower() not in {"1", "true", "yes"}:
+        source = document_title or "tài liệu nguồn"
+        context = f"Ngữ cảnh: đoạn trích từ {source}."
+        return f"{context}\n\n{text}"
     
     try:
         from openai import OpenAI
@@ -157,8 +161,8 @@ def contextual_prepend(text: str, document_title: str = "") -> str:
         context = resp.choices[0].message.content.strip()
         return f"{context}\n\n{text}"
     except Exception:
-        # Fallback: return original text
-        return text
+        source = document_title or "tài liệu nguồn"
+        return f"Ngữ cảnh: đoạn trích từ {source}.\n\n{text}"
 
 
 # ─── Technique 4: Auto Metadata Extraction ──────────────

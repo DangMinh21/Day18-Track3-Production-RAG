@@ -1,5 +1,3 @@
-## Page 1
-
 CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
 Độc lập-Tự do-Hạnh phúc
 ---------------------------------

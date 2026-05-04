@@ -1,3 +1,4 @@
+<<<<<<< feature/tv3-m3-reranking
 # Day 09 Lab — Multi-Agent Orchestration
 # Install: pip install -r requirements.txt
 
@@ -36,3 +37,28 @@ pyyaml>=6.0.1
 
 # ─── Dev/Test ───────────────────────────
 pytest>=8.0.0
+=======
+python-dotenv>=1.0.1
+
+# Testing
+pytest>=8.0.0
+
+# Core RAG dependencies
+numpy>=1.26.0
+pandas>=2.2.0
+datasets>=2.18.0
+openai>=1.30.0
+qdrant-client>=1.9.0
+sentence-transformers>=3.0.0
+
+# Retrieval and Vietnamese text processing
+rank-bm25>=0.2.2
+underthesea>=6.8.0
+
+# Evaluation
+ragas>=0.1.9
+
+# Optional reranking backends used by Module 3
+FlagEmbedding>=1.2.10
+flashrank>=0.2.8
+>>>>>>> main

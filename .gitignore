@@ -6,3 +6,7 @@ __pycache__/
 qdrant_data/
 *.egg-info/
 reports/*.json
+.venv
+venv
+venv/
+docker-vinai-day18/qdrant_storage/

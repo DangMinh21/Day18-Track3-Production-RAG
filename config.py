@@ -30,6 +30,14 @@ DENSE_TOP_K = 20
 HYBRID_TOP_K = 20
 RERANK_TOP_K = 3
 
-# --- Paths ---
-DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
-TEST_SET_PATH = os.path.join(os.path.dirname(__file__), "test_set.json")
+# --- RRF ---
+RRF_K = 60
+
+# --- Rerank (TV3) ---
+RERANK_MODEL = "BAAI/bge-reranker-v2-m3"
+USE_FLASHRANK = True
+
+# --- Evaluation (TV4) ---
+RAGAS_METRICS = ["faithfulness", "answer_relevancy", "context_precision", "context_recall"]
+REPORTS_DIR = os.path.join(os.path.dirname(__file__), "reports")
+ANALYSIS_DIR = os.path.join(os.path.dirname(__file__), "analysis")

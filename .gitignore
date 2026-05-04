@@ -8,3 +8,5 @@ qdrant_data/
 reports/*.json
 .venv
 venv
+venv/
+docker-vinai-day18/qdrant_storage/

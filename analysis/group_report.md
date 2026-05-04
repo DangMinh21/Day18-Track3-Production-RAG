@@ -8,7 +8,7 @@
 | Tên | Module | Hoàn thành | Tests pass |
 |-----|--------|-----------|-----------|
 | Doan Thu Anh | M1: Chunking & M5: Enrichment | ✅ | 13/13 |
-| [TV2] | M2: Hybrid Search | ✅ | 5/5 |
+| Đồng Văn Thịnh  | M2: Hybrid Search | ✅ | 5/5 |
 | Nguyễn Thị Quỳnh Trang | M3: Reranking | ✅ | 5/5 |
 | Đặng Văn Minh | M4: Evaluation | ✅ | 4/4 |
 

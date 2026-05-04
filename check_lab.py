@@ -58,17 +58,18 @@ def run_tests() -> tuple[int, int]:
             [sys.executable, "-m", "pytest", "tests/", "-v", "--tb=no", "-q"],
             capture_output=True, text=True, timeout=120,
         )
-        lines = result.stdout.strip().split("\n")
-        summary = lines[-1] if lines else ""
-        # Parse "X passed, Y failed" or "X passed"
+        output = "\n".join([result.stdout.strip(), result.stderr.strip()]).strip()
         passed = total = 0
-        for part in summary.split(","):
-            part = part.strip()
-            if "passed" in part:
-                passed = int(part.split()[0])
-                total += passed
-            if "failed" in part:
-                total += int(part.split()[0])
+        if output:
+            import re
+            passed_matches = re.findall(r"(\d+)\s+passed", output)
+            failed_matches = re.findall(r"(\d+)\s+failed", output)
+            error_matches = re.findall(r"(\d+)\s+errors", output)
+            if passed_matches:
+                passed = int(passed_matches[-1])
+                total += sum(int(x) for x in passed_matches)
+            total += sum(int(x) for x in failed_matches)
+            total += sum(int(x) for x in error_matches)
         return passed, total
     except Exception as e:
         print(f"  ⚠️  pytest error: {e}")

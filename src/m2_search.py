@@ -1,6 +1,7 @@
 """Module 2: Hybrid Search — BM25 (Vietnamese) + Dense + RRF."""
 
 import os, sys
+from collections import Counter
 from dataclasses import dataclass
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -35,6 +36,7 @@ def segment_vietnamese(text: str) -> str:
 class BM25Search:
     def __init__(self):
         self.corpus_tokens = []
+        self.corpus_freqs = []
         self.documents = []
         self.bm25 = None
 
@@ -49,27 +51,38 @@ class BM25Search:
             segment_vietnamese(chunk["text"]).split() 
             for chunk in chunks
         ]
+        self.corpus_freqs = [Counter(tokens) for tokens in self.corpus_tokens]
         
         # 3. Khởi tạo mô hình BM25Okapi[cite: 2]
         try:
             from rank_bm25 import BM25Okapi
             self.bm25 = BM25Okapi(self.corpus_tokens)
         except ImportError:
-            # Fallback: Nếu thiếu thư viện, bạn cần log cảnh báo 
-            # và có thể dùng một bộ scorer đơn giản dựa trên token overlap[cite: 2]
-            print("Warning: rank_bm25 not installed. Search may fail.")
+            # Fallback: Nếu thiếu thư viện, sử dụng token overlap đơn giản
+            print("Warning: rank_bm25 not installed. Using token-overlap fallback for BM25-like scoring.")
             self.bm25 = None
 
     def search(self, query: str, top_k: int = BM25_TOP_K) -> list[SearchResult]:
         """Search using BM25."""
-        if not self.bm25 or not self.documents:
+        if not self.documents:
             return []
 
         # 1. Tokenize câu truy vấn tương tự như lúc index[cite: 2]
         tokenized_query = segment_vietnamese(query).split()
-        
+        if not tokenized_query:
+            return []
+
         # 2. Tính toán điểm số mức độ liên quan cho toàn bộ corpus[cite: 2]
-        scores = self.bm25.get_scores(tokenized_query)
+        if self.bm25 is not None:
+            scores = self.bm25.get_scores(tokenized_query)
+        else:
+            # Fallback simple scoring: tổng token overlap giữa query và document
+            query_freq = Counter(tokenized_query)
+            scores = []
+            for doc_freq in self.corpus_freqs:
+                score = sum(min(doc_freq.get(token, 0), count)
+                            for token, count in query_freq.items())
+                scores.append(float(score))
         
         # 3. Lấy ra top_k vị trí có điểm cao nhất[cite: 2]
         top_indices = sorted(
@@ -81,7 +94,6 @@ class BM25Search:
         # 4. Đóng gói kết quả vào đối tượng SearchResult[cite: 2]
         results = []
         for i in top_indices:
-            # Tối ưu: Bỏ qua các tài liệu có score = 0 nếu không cần thiết[cite: 2]
             if scores[i] > 0 or len(results) < top_k:
                 results.append(SearchResult(
                     text=self.documents[i]["text"],
